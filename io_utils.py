@@ -94,14 +94,3 @@ def cargar_secuencia(ruta):
     return seq_id, secuencia
 
 
-# ── Prueba al ejecutar directamente ───────────────────────────────────────────
-if __name__ == "__main__":
-    import sys
-
-    ruta = sys.argv[1] if len(sys.argv) > 1 else "ejemplo.fasta"
-
-    seq_id, secuencia = cargar_secuencia(ruta)
-
-    if secuencia:
-        print(f"ID       : {seq_id}")
-        print(f"Secuencia: {secuencia}")
