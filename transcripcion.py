@@ -1,53 +1,50 @@
 """
 transcripcion.py
 ----------------
-Simula el Paso 4: Transcripción de ADN a ARNm.
-Recibe una cadena codificante (5'->3') y muestra el proceso completo en consola.
+Simula la transcripcion de ADN a ARNm.
+Recibe una cadena codificante (5'->3') y muestra el proceso en consola.
 """
+from Bio.Seq import Seq
 
 COMPLEMENTO_ADN = {"A": "T", "T": "A", "G": "C", "C": "G"}
 COMPLEMENTO_TRANSCRIPCION = {"A": "U", "T": "A", "C": "G", "G": "C"}
+VISTA = 60
 
 
 def complementaria_adn(sec):
-    """Devuelve la cadena de ADN complementaria (misma dirección)."""
+    """Devuelve la cadena de ADN complementaria (misma direccion de escritura)."""
     return "".join(COMPLEMENTO_ADN[b] for b in sec)
 
 
 def transcribir_adn(cadena_codificante):
     """
-    Simula la transcripción del ADN a ARNm.
+    Simula la transcripcion del ADN a ARNm.
     Recibe la cadena codificante (5'->3') y devuelve el ARNm (5'->3').
     """
     cod = cadena_codificante.upper()
+    n = len(cod)
     molde = complementaria_adn(cod)
     arnm = "".join(COMPLEMENTO_TRANSCRIPCION[b] for b in molde)
+
+    v = min(n, VISTA)
+    puntos = " ..." if n > VISTA else ""
 
     print("\n=== TRANSCRIPCION DE ADN a ARNm ===\n")
 
     print("Enzimas y moleculas:")
-    print("  Promotor        : secuencia de inicio donde se une la ARN polimerasa")
-    print("  ARN polimerasa  : lee la hebra molde 3' a 5' y sintetiza ARNm 5' a 3'")
-    print("  Ribonucleotidos : ATP, UTP, GTP, CTP")
-    print("  Terminador      : secuencia de fin de transcripcion")
+    print("  Promotor: señal de inicio donde se une la ARN polimerasa")
+    print("  ARN polimerasa: lee el molde 3'->5' y sintetiza el ARNm 5'->3'")
+    print("  Ribonucleotidos: ATP, UTP, GTP, CTP")
+    print("  Terminador: senal de fin de la transcripcion")
 
-    print("\nReglas de complementariedad (molde a ARNm):")
-    print("  A del molde produce U en el ARNm")
-    print("  T del molde produce A en el ARNm")
-    print("  C del molde produce G en el ARNm")
-    print("  G del molde produce C en el ARNm")
+    print("\nComplementariedad molde -> ARNm:  A->U   T->A   C->G   G->C\n")
 
-    print("\nSintesis del ARNm:")
-    print(f"  Molde  3' {molde} 5'")
-    print(f"  ARNm   5' {arnm} 3'")
-
-    print("\nAlineamiento de las tres cadenas:")
-    print(f"  Codificante  5' {cod}  3'")
-    print(f"  Molde        3' {molde}  5'")
-    print(f"  ARNm         5' {arnm}  3'")
-
-    verificacion = cod.replace("T", "U")
-    estado = "correcto" if arnm == verificacion else "error: revisar logica"
-    print(f"\nVerificacion (ARNm igual a codificante sustituyendo T por U): {estado}\n")
+    if n > VISTA:
+        print(f"(Se dibujan los primeros {VISTA} de {n} nt; el calculo usa la secuencia completa)\n")
+    print(f"  Codificante  5' {cod[:v]}{puntos} 3'")
+    print(f"                  {'|' * v}")
+    print(f"  Molde        3' {molde[:v]}{puntos} 5'")
+    print(f"                  {'|' * v}")
+    print(f"  ARNm         5' {arnm[:v]}{puntos} 3'")
 
     return arnm
