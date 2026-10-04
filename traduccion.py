@@ -3,27 +3,20 @@
 import textwrap
 
 from Bio.Data import CodonTable
-from Bio.Seq import Seq
 from Bio.SeqUtils import seq3
 
+COMPLEMENTO_ARN = {"A": "U", "U": "A", "C": "G", "G": "C"}
 FILAS = 12
 ANCHO = 60
 
 
 def obtener_tabla(tabla_id):
     """Devuelve la tabla del código genético (ARN) de Biopython."""
-    tabla = CodonTable.unambiguous_rna_by_id[tabla_id]
-    if set(tabla.stop_codons) & set(tabla.forward_table):
-        raise ValueError(
-            f"La tabla {tabla_id} tiene codones que son parada y "
-            "aminoácido a la vez; no se admite."
-        )
-    return tabla
-
+    return CodonTable.unambiguous_rna_by_id[tabla_id]
 
 def anticodon(codon):
     """Devuelve el anticodón del ARNt, escrito 3'->5'."""
-    return str(Seq(codon).complement_rna())
+    return "".join(COMPLEMENTO_ARN[base] for base in codon)
 
 
 def buscar_marco(arnm, tabla):

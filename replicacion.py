@@ -1,7 +1,6 @@
 """Simulación de la replicación semiconservativa del ADN."""
 
-from Bio.Seq import Seq
-
+COMPLEMENTO_ADN = {"A": "T", "T": "A", "G": "C", "C": "G"}
 LONGITUD_CEBADOR = 5
 LONGITUD_OKAZAKI = 10
 VISTA = 60
@@ -9,8 +8,8 @@ SANGRIA = 22
 
 
 def complementaria(secuencia):
-    """Devuelve la cadena complementaria, escrita en el mismo sentido."""
-    return str(Seq(secuencia).complement())
+    """Devuelve la cadena complementaria de ADN (misma dirección)."""
+    return "".join(COMPLEMENTO_ADN[b] for b in secuencia)
 
 
 def cebador_arn(secuencia_adn):

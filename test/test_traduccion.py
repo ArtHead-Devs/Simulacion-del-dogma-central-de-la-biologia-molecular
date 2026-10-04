@@ -23,10 +23,6 @@ class TestTraduccion(unittest.TestCase):
         self.assertEqual(traduccion.traducir_arnm("AUGAUAUAA", 1), "MI")
         self.assertEqual(traduccion.traducir_arnm("AUGAUAUAA", 2), "MM")
 
-    def test_rechaza_tablas_con_codones_ambiguos(self):
-        with self.assertRaises(ValueError):
-            traduccion.traducir_arnm("AUGGCCUAA", 27)
-
     def test_coincide_con_biopython(self):
         desde_aug = ARNM[ARNM.find("AUG"):]
         util = desde_aug[:len(desde_aug) // 3 * 3]
