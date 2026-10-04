@@ -1,105 +1,138 @@
-"""
-replicacion.py
---------------
-Simula la replicacion del ADN (modelo semiconservativo).
-Recibe una cadena codificante (5'->3') y muestra el proceso en consola.
-La horquilla avanza hacia la derecha. MAYUSCULAS = ADN, minusculas = ARN (cebadores).
-"""
+"""Simulación de la replicación semiconservativa del ADN."""
+
 from Bio.Seq import Seq
 
 LONGITUD_CEBADOR = 5
 LONGITUD_OKAZAKI = 10
 VISTA = 60
-
-def complementaria(sec):
-    """Devuelve la cadena complementaria de ADN (misma direccion de escritura)."""
-    return str(Seq(sec).complement())
+SANGRIA = 22
 
 
-def cebador_arn(sec_adn):
-    """Un cebador es de ARN: la T pasa a U. Se escribe en minusculas."""
-    return sec_adn.replace("T", "U").lower()
+def complementaria(secuencia):
+    """Devuelve la cadena complementaria, escrita en el mismo sentido."""
+    return str(Seq(secuencia).complement())
 
 
-def replicar_adn(cadena_codificante):
-    """Simula la replicacion. Recibe la cadena codificante (5'->3') y devuelve (hija1, hija2)."""
-    cod = cadena_codificante.upper()
-    n = len(cod)
-    molde = complementaria(cod)
-    v = min(n, VISTA)
-    puntos = " ..." if n > VISTA else ""
+def cebador_arn(secuencia_adn):
+    """Convierte ADN en un cebador de ARN (T pasa a U, en minúsculas)."""
+    return secuencia_adn.replace("T", "U").lower()
 
-    def fila(nombre, e5, texto, e3):
-        print(f"  {nombre:<16} {e5} {texto[:v]}{puntos} {e3}")
 
-    def barras(desde=0):
-        print(" " * (22 + desde) + "|" * (v - desde))
+def sintetizar_rezagada(codificante):
+    """Sintetiza la cadena rezagada en fragmentos de Okazaki.
 
-    print("\n=== REPLICACION DEL ADN ===\n")
-    if n > VISTA:
-        print(f"(Se dibujan los primeros {VISTA} de {n} nt; el calculo usa la secuencia completa)\n")
+    Devuelve una lista de (inicio, fin, cebador, fragmento), con las
+    posiciones contadas desde 1.
+    """
+    paso = LONGITUD_CEBADOR + LONGITUD_OKAZAKI
+    fragmentos = []
+    for inicio in range(0, len(codificante), paso):
+        fin = min(inicio + paso, len(codificante))
+        fragmento = complementaria(codificante[inicio:fin])
+        cebador = cebador_arn(fragmento[-LONGITUD_CEBADOR:])
+        fragmentos.append((inicio + 1, fin, cebador, fragmento))
+    return fragmentos
 
-    print("Molecula parental:")
-    fila("Codificante", "5'", cod, "3'")
-    barras()
+
+def replicar_adn(codificante):
+    """Replica la molécula y devuelve sus dos moléculas hijas.
+
+    Cada hija es una tupla (hebra codificante, hebra molde).
+    """
+    molde = complementaria(codificante)
+    lider = complementaria(molde)
+    rezagada = "".join(f[3] for f in sintetizar_rezagada(codificante))
+    return (lider, molde), (codificante, rezagada)
+
+
+def fila(nombre, extremo_5, texto, extremo_3):
+    """Imprime una hebra con sus extremos, recortada al ancho de vista."""
+    puntos = " ..." if len(texto) > VISTA else ""
+    print(f"  {nombre:<16} {extremo_5} {texto[:VISTA]}{puntos} {extremo_3}")
+
+
+def barras(longitud, desde=0):
+    """Imprime los puentes de hidrógeno entre dos hebras."""
+    ancho = min(longitud, VISTA) - desde
+    print(" " * (SANGRIA + desde) + "|" * ancho)
+
+
+def mostrar_parental(codificante, molde):
+    """Muestra la molécula de ADN de partida."""
+    print("\n=== REPLICACIÓN DEL ADN ===\n")
+    print("Molécula parental:")
+    fila("Codificante", "5'", codificante, "3'")
+    barras(len(codificante))
     fila("Molde", "3'", molde, "5'")
 
-    print("\nEnzimas:")
-    print("  Topoisomerasa: relaja la tension antes de la apertura")
-    print("  Helicasa: separa las dos hebras")
-    print("  Primasa: sintetiza cebadores de ARN")
-    print("  ADN polimerasa: extiende los cebadores (5'->3') y los sustituye por ADN")
-    print("  Ligasa: une los fragmentos de Okazaki")
 
-    h = v // 2
-    print(f"\nApertura de la horquilla (posicion {h}, avanza hacia la derecha):")
-    fila("Codificante", "5'", cod, "3'")
-    barras(h)
+def mostrar_apertura(codificante, molde):
+    """Muestra la apertura de la horquilla de replicación."""
+    posicion = min(len(codificante), VISTA) // 2
+    print(f"\nApertura [Topoisomerasa, Helicasa, SSB] en {posicion}:")
+    fila("Codificante", "5'", codificante, "3'")
+    barras(len(codificante), posicion)
     fila("Molde", "3'", molde, "5'")
-    print(" " * (22 + h) + "^")
+    print(" " * (SANGRIA + posicion) + "^")
 
-    cebador_l = cebador_arn(cod[:LONGITUD_CEBADOR])
-    lider = cebador_l + cod[LONGITUD_CEBADOR:]
-    print("\nCadena LIDER (sintesis continua, mismo sentido que la horquilla):")
-    print(f"  Un unico cebador de ARN ({cebador_l}); la ADN polimerasa extiende sin parar.")
+
+def mostrar_lider(molde, lider):
+    """Muestra la síntesis continua de la cadena líder."""
+    cebador = cebador_arn(lider[:LONGITUD_CEBADOR])
+    print("\nCadena LÍDER [Primasa, ADN polimerasa III]:")
+    print(f"  Cebador de ARN: {cebador}")
     fila("Molde", "3'", molde, "5'")
-    barras()
-    fila("Lider (nueva)", "5'", lider, "3'")
+    barras(len(molde))
+    fila("Líder (nueva)", "5'", cebador + lider[LONGITUD_CEBADOR:], "3'")
 
-    print("\nCadena REZAGADA (sintesis discontinua, fragmentos de Okazaki):")
-    print("  Molde = hebra codificante. Cada fragmento lleva su cebador en el extremo 5'")
-    print("  (a la derecha) y se sintetiza hacia la izquierda, alejandose de la horquilla.")
-    marcada, limites, fragmentos = "", [" "] * n, []
-    for ini in range(0, n, LONGITUD_CEBADOR + LONGITUD_OKAZAKI):
-        fin = min(ini + LONGITUD_CEBADOR + LONGITUD_OKAZAKI, n)
-        nueva = complementaria(cod[ini:fin])
-        cab = min(LONGITUD_CEBADOR, len(nueva))
-        cebador = cebador_arn(nueva[-cab:])
-        marcada += nueva[:-cab] + cebador
-        limites[ini], limites[fin - 1] = "[", ("]" if fin - 1 > ini else "[")
-        fragmentos.append((ini + 1, fin, cebador, nueva))
-    fila("Molde", "5'", cod, "3'")
-    barras()
-    fila("Rezagada (nueva)", "3'", marcada, "5'")
-    print(f"  {'Fragmentos':<16}    {''.join(limites)[:v]}\n")
-    for num, (ini, fin, cebador, _) in enumerate(fragmentos[:3], 1):
-        print(f"  Fragmento {num}  [{ini}..{fin}]  cebador de ARN: {cebador}")
-    print(f"  Total: {len(fragmentos)} fragmentos de Okazaki (1 cebador por fragmento)")
-    print("  La ADN polimerasa cambia los cebadores por ADN y la ligasa sella las muescas.")
 
-    lider_final = lider.upper().replace("U", "T")
-    rezagada_final = "".join(f[3] for f in fragmentos)
-    assert lider_final == cod and rezagada_final == molde, "error en la replicacion"
+def rezagada_con_cebadores(fragmentos):
+    """Une los fragmentos dejando los cebadores de ARN en minúsculas."""
+    return "".join(
+        fragmento[:len(fragmento) - len(cebador)] + cebador
+        for _, _, cebador, fragmento in fragmentos
+    )
 
-    print("\nMoleculas hijas (replicacion semiconservativa):")
-    print("  Hija 1 = hebra parental (molde) + hebra LIDER nueva")
-    fila("Nueva (lider)", "5'", lider_final, "3'")
-    barras()
+
+def mostrar_rezagada(codificante, fragmentos):
+    """Muestra la síntesis discontinua de la cadena rezagada."""
+    limites = [" "] * len(codificante)
+    for inicio, fin, _, _ in fragmentos:
+        limites[fin - 1] = "]"
+        limites[inicio - 1] = "["
+
+    print("\nCadena REZAGADA [Primasa, ADN polimerasa III]:")
+    fila("Molde", "5'", codificante, "3'")
+    barras(len(codificante))
+    fila("Rezagada (nueva)", "3'", rezagada_con_cebadores(fragmentos), "5'")
+    print(f"  {'Fragmentos':<16}    {''.join(limites)[:VISTA]}\n")
+    for numero, (inicio, fin, cebador, _) in enumerate(fragmentos[:3], 1):
+        print(f"  Fragmento {numero} [{inicio}..{fin}] cebador: {cebador}")
+    print(f"  Total: {len(fragmentos)} fragmentos de Okazaki")
+    print("  Cebadores a ADN [ADN polimerasa I], muescas [Ligasa]")
+
+
+def mostrar_hijas(hija_1, hija_2):
+    """Muestra las dos moléculas hijas."""
+    lider, molde = hija_1
+    codificante, rezagada = hija_2
+    print("\nHija 1 = hebra parental (molde) + hebra LÍDER nueva")
+    fila("Nueva (líder)", "5'", lider, "3'")
+    barras(len(lider))
     fila("Parental", "3'", molde, "5'")
-    print("\n  Hija 2 = hebra parental (codificante) + hebra REZAGADA nueva")
-    fila("Parental", "5'", cod, "3'")
-    barras()
-    fila("Nueva (rezagada)", "3'", rezagada_final, "5'")
+    print("\nHija 2 = hebra parental (codificante) + hebra REZAGADA nueva")
+    fila("Parental", "5'", codificante, "3'")
+    barras(len(codificante))
+    fila("Nueva (rezagada)", "3'", rezagada, "5'")
 
-    print("\nReplicacion semiconservativa completada.\n")
-    return lider_final, cod
+
+def mostrar_replicacion(codificante):
+    """Muestra todo el proceso de replicación y devuelve las hijas."""
+    molde = complementaria(codificante)
+    hija_1, hija_2 = replicar_adn(codificante)
+    mostrar_parental(codificante, molde)
+    mostrar_apertura(codificante, molde)
+    mostrar_lider(molde, hija_1[0])
+    mostrar_rezagada(codificante, sintetizar_rezagada(codificante))
+    mostrar_hijas(hija_1, hija_2)
+    return hija_1, hija_2
