@@ -4,8 +4,6 @@ transcripcion.py
 Simula la transcripcion de ADN a ARNm.
 Recibe una cadena codificante (5'->3') y muestra el proceso en consola.
 """
-from Bio.Seq import Seq
-
 COMPLEMENTO_ADN = {"A": "T", "T": "A", "G": "C", "C": "G"}
 COMPLEMENTO_TRANSCRIPCION = {"A": "U", "T": "A", "C": "G", "G": "C"}
 VISTA = 60
