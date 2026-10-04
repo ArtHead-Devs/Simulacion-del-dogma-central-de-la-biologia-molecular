@@ -83,8 +83,7 @@ def mostrar_elongacion(codones, inicio, tabla):
         print(f"  {numero:>3}  {posicion:>4}  {codon:<6} "
               f"{anticodon(codon):<15} {seq3(letra):<4} {letra}")
     if len(codones) > FILAS:
-        print(f"  ... y {len(codones) - FILAS} codones más")
-
+        print(f"  ... y {len(codones) - FILAS} más")
 
 def mostrar_terminacion(arnm, inicio, parada):
     """Muestra el codón de parada o los avisos si no lo hay."""

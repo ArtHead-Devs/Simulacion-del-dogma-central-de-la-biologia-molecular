@@ -108,7 +108,7 @@ def mostrar_rezagada(codificante, fragmentos):
     print(f"  {'Fragmentos':<16}    {''.join(limites)[:VISTA]}\n")
     for numero, (inicio, fin, cebador, _) in enumerate(fragmentos[:3], 1):
         print(f"  Fragmento {numero} [{inicio}..{fin}] cebador: {cebador}")
-    print(f"  Total: {len(fragmentos)} fragmentos de Okazaki")
+    print(f"  Fragmentos de Okazaki: {len(fragmentos)}")
     print("  Cebadores a ADN [ADN polimerasa I], muescas [Ligasa]")
 
 
