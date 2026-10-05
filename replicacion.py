@@ -58,11 +58,9 @@ def mostrar_replicacion(codificante):
     print(f"  3' {molde[:ancho]}{puntos} 5'")
 
     print("\n2. Apertura de la doble hélice [Topoisomerasa, Helicasa]:")
-    print(f"  5' {codificante[:ancho]} 3'")
-    mitad = ancho // 2
-    print("     " + " " * mitad + "|" * (ancho - mitad))
-    print(f"  3' {molde[:ancho]} 5'")
-    print("     " + " " * mitad + "^ horquilla")
+    print("  La topoisomerasa reduce la tensión y la helicasa separa las dos hebras.")
+    print(f"  5' {codificante[:ancho]}{puntos} 3'")
+    print(f"  3' {molde[:ancho]}{puntos} 5'")
 
     print("\n3. Cadena líder [Primasa, ADN polimerasa]:")
     cebador = cebador_arn(hija_1[0][:LONGITUD_CEBADOR])
@@ -76,15 +74,17 @@ def mostrar_replicacion(codificante):
         print(f"  Okazaki {numero} [{inicio}-{fin}]: cebador {cebador}")
     print(f"  Total de fragmentos: {len(fragmentos)}")
     print("  Síntesis discontinua por ADN polimerasa.")
-    print("  La ADN polimerasa sustituye los cebadores y la ligasa une los fragmentos.")
+    print("  La ADN polimerasa elimina los cebadores y los sustituye por ADN.")
+    print("  La ligasa une los fragmentos de Okazaki.")
 
     print("\n5. Moléculas hijas:")
-    print("  Hija 1 = parental + nueva:")
-    print(f"    5' {hija_1[0][:ancho]}{puntos} 3'")
-    print(f"    3' {hija_1[1][:ancho]}{puntos} 5'")
 
-    print("  Hija 2 = parental + nueva:")
-    print(f"    5' {hija_2[0][:ancho]}{puntos} 3'")
-    print(f"    3' {hija_2[1][:ancho]}{puntos} 5'")
+    print("  Hija 1:")
+    print(f"    5' {hija_1[0][:ancho]}{puntos} 3'  [nueva]")
+    print(f"    3' {hija_1[1][:ancho]}{puntos} 5'  [parental]")
+
+    print("  Hija 2:")
+    print(f"    5' {hija_2[0][:ancho]}{puntos} 3'  [parental]")
+    print(f"    3' {hija_2[1][:ancho]}{puntos} 5'  [nueva]")
 
     return hija_1, hija_2
