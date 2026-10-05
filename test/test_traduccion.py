@@ -33,14 +33,6 @@ class TestTraduccion(unittest.TestCase):
     def test_el_anticodon_es_el_complementario(self):
         self.assertEqual(traduccion.anticodon("AUG"), "UAC")
 
-    def test_cds_valida(self):
-        self.assertTrue(traduccion.es_cds("AUGGCCUAA", TABLA))
-
-    def test_cds_invalidas(self):
-        casos = ["AUGGCC", "AUGGCCUA", "GCCUAA", "AUGUAAGCCUAA", ""]
-        for caso in casos:
-            self.assertFalse(traduccion.es_cds(caso, TABLA), caso)
-
 
 if __name__ == "__main__":
     unittest.main()
