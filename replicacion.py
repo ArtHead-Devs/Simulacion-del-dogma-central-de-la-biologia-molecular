@@ -59,8 +59,8 @@ def mostrar_replicacion(codificante):
 
     print("\n2. Apertura de la doble hélice [Topoisomerasa, Helicasa]:")
     print("  La topoisomerasa reduce la tensión y la helicasa separa las dos hebras.")
-    print(f"  5' {codificante[:ancho]}{puntos} 3'")
-    print(f"  3' {molde[:ancho]}{puntos} 5'")
+    print(f"  Hebra parental 1: 5' {codificante[:ancho]}{puntos} 3'")
+    print(f"  Hebra parental 2: 3' {molde[:ancho]}{puntos} 5'")
 
     print("\n3. Cadena líder [Primasa, ADN polimerasa]:")
     cebador = cebador_arn(hija_1[0][:LONGITUD_CEBADOR])
@@ -80,11 +80,11 @@ def mostrar_replicacion(codificante):
     print("\n5. Moléculas hijas:")
 
     print("  Hija 1:")
-    print(f"    5' {hija_1[0][:ancho]}{puntos} 3'  [nueva]")
+    print(f"    5' {hija_1[0][:ancho]}{puntos} 3'  [nueva, líder]")
     print(f"    3' {hija_1[1][:ancho]}{puntos} 5'  [parental]")
 
     print("  Hija 2:")
     print(f"    5' {hija_2[0][:ancho]}{puntos} 3'  [parental]")
-    print(f"    3' {hija_2[1][:ancho]}{puntos} 5'  [nueva]")
+    print(f"    3' {hija_2[1][:ancho]}{puntos} 5'  [nueva, rezagada]")
 
     return hija_1, hija_2
