@@ -77,7 +77,7 @@ def mostrar_traduccion(arnm: str, tabla_id: int = 1):
     """
     Muestra el proceso de traducción y devuelve la proteína.
 
-    Imprime la posición del AUG inicial, una fila por codón con su anticodón y su aminoácido (solo los MAX_FILA
+    Imprime la posición del AUG inicial, una fila por codón con su anticodón y su aminoácido (solo los MAX_FILAS
     primeros), el codón de parada o los avisos si falta, y la proteína completa en una letra y en tres letras (solo los
     MAX_AA primeros aminoácidos).
 

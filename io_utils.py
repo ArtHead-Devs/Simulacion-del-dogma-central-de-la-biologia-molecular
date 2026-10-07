@@ -1,7 +1,5 @@
 """Lectura y validación de secuencias de ADN en formato FASTA o RAW."""
 
-import os
-
 from pathlib import Path
 
 BASES_VALIDAS = set("ATGC")
@@ -23,7 +21,7 @@ def leer_fasta(ruta: str):
         print(f"Error: '{ruta}' no es un archivo FASTA.")
         return None, None
 
-    with ruta.open("r") as archivo:
+    with ruta.open("r", encoding="utf-8") as archivo:
         seq_id = None
         secuencia = ""
 
@@ -54,7 +52,11 @@ def leer_raw(ruta: str):
     """
     ruta = Path(ruta)
 
-    with ruta.open("r") as archivo:
+    if ruta.suffix.lower() != ".raw":
+        print(f"Error: '{ruta}' no es un archivo RAW.")
+        return None, None
+
+    with ruta.open("r", encoding="utf-8") as archivo:
         secuencia = "".join(archivo.read().split()).upper()
 
     nombre = ruta.stem
@@ -88,11 +90,12 @@ def cargar_secuencia(ruta: str):
     Returns:
         - (str, str): Tupla con el ID de la secuencia y la secuencia en mayúsculas, o (None, None) si hubo un error.
     """
-    if not os.path.exists(ruta):
+    ruta = Path(ruta)
+    if not ruta.exists():
         print(f"Error: no se encuentra el archivo '{ruta}'.")
         return None, None
 
-    if ruta.lower().endswith(".raw"):
+    if ruta.suffix.lower() == ".raw":
         seq_id, secuencia = leer_raw(ruta)
     else:
         seq_id, secuencia = leer_fasta(ruta)

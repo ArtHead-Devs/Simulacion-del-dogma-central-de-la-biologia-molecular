@@ -29,7 +29,7 @@ def mostrar_transcripcion(codificante: str):
     Muestra el proceso de transcripción.
 
     Imprime la regla de complementariedad y tres líneas, la hebra codificante, la hebra molde y el ARNm. Solo se
-    printean los primeros MAX_LONGITUD nucleótidos, pero el cálculo usa la secuencia completa.
+    imprimen los primeros MAX_LONGITUD nucleótidos, pero el cálculo usa la secuencia completa.
 
     Args:
         - codificante (str): Hebra codificante de ADN (5'->3'). Se convierte a mayúsculas.
