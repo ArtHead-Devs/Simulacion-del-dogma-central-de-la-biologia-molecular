@@ -48,17 +48,18 @@ Simulacion-del-dogma-central-de-la-biologia-molecular/
 │   ├── test_replicacion.py
 │   ├── test_transcripcion.py
 │   └── test_traduccion.py
-├── io_utils.py                       # lectura y validación de secuencias
-├── replicacion.py                    # ADN → ADN
-├── transcripcion.py                  # ADN → ARNm
-├── traduccion.py                     # ARNm → proteína
-├── main.py                           # punto de entrada (línea de comandos)
-├── simulador.ipynb                   # notebook con la teoría y la ejecución paso a paso
-├── pyproject.toml
-├── uv.lock
+├── .gitignore
 ├── .python-version
 ├── LICENSE
-└── README.md
+├── README.md
+├── io_utils.py                       # lectura y validación de secuencias
+├── main.py                           # punto de entrada (línea de comandos)
+├── pyproject.toml
+├── replicacion.py                    # ADN → ADN
+├── simulador.ipynb                   # notebook con la teoría y la ejecución paso a paso
+├── traduccion.py                     # ARNm → proteína
+├── transcripcion.py                  # ADN → ARNm
+└── uv.lock
 ```
 
 ## Requisitos e instalación
