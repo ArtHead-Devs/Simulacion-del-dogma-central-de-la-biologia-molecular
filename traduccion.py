@@ -9,18 +9,50 @@ MAX_FILAS = 12
 MAX_AA = 20
 
 
-def obtener_tabla(tabla_id=1):
-    """Devuelve la tabla del código genético."""
+def obtener_tabla(tabla_id: int = 1):
+    """
+    Devuelve la tabla del código genético de Biopython (versión ARN).
+
+    Args:
+        - tabla_id (int): Número de tabla de NCBI (1 = estándar).
+
+    Returns:
+        - Bio.Data.CodonTable.NCBICodonTableRNA: Tabla con los atributos forward_table (codón -> aminoácido), stop_codons
+        y start_codons.
+    """
     return CodonTable.unambiguous_rna_by_id[tabla_id]
 
 
-def anticodon(codon):
-    """Obtiene el anticodón del ARNt."""
+def anticodon(codon: str):
+    """
+    Obtiene el anticodón del ARNt que reconoce un codón.
+
+    El anticodón es complementario y antiparalelo al codón, por lo que se escribe en sentido 3'->5' alineado con el
+    codón. Por ejemplo, el anticodón de "AUG" es "UAC".
+
+    Args:
+        - codon (str): Codón de ARNm (tres bases A, U, C, G).
+
+    Returns:
+        - str: Anticodón (3'->5').
+    """
     return "".join(COMPLEMENTO_ARN[base] for base in codon)
 
 
-def traducir_arnm(arnm, tabla_id=1):
-    """Traduce el ARNm desde el primer AUG hasta un codón STOP."""
+def traducir_arnm(arnm: str, tabla_id: int = 1):
+    """
+    Traduce el ARNm desde el primer AUG hasta un codón de parada.
+
+    Lee codones completos de tres en tres a partir del primer AUG y se detiene en la primera parada, que no se incluye.
+    Si no hay parada, traduce todos los codones completos hasta el final.
+
+    Args:
+        - arnm (str): ARNm (5'->3'). Se convierte a mayúsculas.
+        - tabla_id (int): Número de tabla del código genético de Biopython (1 = estándar).
+
+    Returns:
+        - str: Proteína con una letra por aminoácido, o "" si no hay AUG.
+    """
     tabla = obtener_tabla(tabla_id)
     arnm = arnm.upper()
     inicio = arnm.find("AUG")
@@ -41,8 +73,21 @@ def traducir_arnm(arnm, tabla_id=1):
     return "".join(proteina)
 
 
-def mostrar_traduccion(arnm, tabla_id=1):
-    """Muestra el proceso de traducción y devuelve la proteína."""
+def mostrar_traduccion(arnm: str, tabla_id: int = 1):
+    """
+    Muestra el proceso de traducción y devuelve la proteína.
+
+    Imprime la posición del AUG inicial, una fila por codón con su anticodón y su aminoácido (solo los MAX_FILA
+    primeros), el codón de parada o los avisos si falta, y la proteína completa en una letra y en tres letras (solo los
+    MAX_AA primeros aminoácidos).
+
+    Args:
+        - arnm (str): ARNm (5'->3'). Se convierte a mayúsculas.
+        - tabla_id (int): Número de tabla del código genético de Biopython (1 = estándar).
+
+    Returns:
+        - str: Proteína con una letra por aminoácido, o "" si no hay AUG.
+    """
     tabla = obtener_tabla(tabla_id)
     arnm = arnm.upper()
     proteina = traducir_arnm(arnm, tabla_id)

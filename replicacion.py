@@ -6,18 +6,54 @@ LONGITUD_OKAZAKI = 10
 MAX_LONGITUD = 60
 
 
-def complementaria(secuencia):
-    """Devuelve la cadena complementaria de ADN."""
+def complementaria(secuencia: str):
+    """
+    Devuelve la cadena complementaria de ADN, base a base.
+
+    La cadena se escribe en el mismo orden que la original, sin invertirla, si la entrada se lee en sentido 5'->3',
+    el resultado se lee 3'->5'.
+
+    Args:
+        - secuencia (str): Secuencia de ADN (solo A, T, G, C).
+
+    Returns:
+        - str: Secuencia complementaria (A-T, G-C) de la misma longitud.
+    """
     return "".join(COMPLEMENTO_ADN[b] for b in secuencia)
 
 
-def cebador_arn(secuencia_adn):
-    """Convierte una secuencia de ADN en un cebador de ARN."""
+def cebador_arn(secuencia_adn: str):
+    """
+    Convierte una secuencia de ADN en un cebador de ARN.
+
+    Cambia cada T por U y escribe el resultado en minúsculas, que es la convención del simulador para distinguir el
+    ARN del ADN. Por ejemplo, "TTGAC" se convierte en "uugac".
+
+    Args:
+        - secuencia_adn (str): Fragmento de ADN en mayúsculas.
+
+    Returns:
+        - str: Cebador de ARN en minúsculas.
+    """
     return secuencia_adn.replace("T", "U").lower()
 
 
-def sintetizar_rezagada(codificante):
-    """Genera los fragmentos de Okazaki de la cadena rezagada."""
+def sintetizar_rezagada(codificante: str):
+    """
+    Genera los fragmentos de Okazaki de la cadena rezagada.
+
+    La hebra codificante actúa como molde de la rezagada. Se divide en tramos de LONGITUD_CEBADOR + LONGITUD_OKAZAKI
+    nucleótidos (el último puede ser más corto) y cada tramo se complementa. El cebador de ARN ocupa los últimos
+    LONGITUD_CEBADOR nucleótidos del fragmento, que es su extremo 5' (si el fragmento es más corto, el cebador es el
+    fragmento entero).
+
+    Args:
+        - codificante (str): Hebra codificante de ADN (5'->3').
+
+    Returns:
+        - list[tuple]: Una tupla (inicio, fin, cebador, fragmento) por cada fragmento. Las posiciones cuentan desde 1
+        sobre la codificante, el cebador es ARN en minúsculas y el fragmento es ADN escrito en sentido 3'->5'.
+    """
     paso = LONGITUD_CEBADOR + LONGITUD_OKAZAKI
     fragmentos = []
 
@@ -30,8 +66,21 @@ def sintetizar_rezagada(codificante):
     return fragmentos
 
 
-def replicar_adn(codificante):
-    """Replica la molécula y devuelve las dos moléculas hijas."""
+def replicar_adn(codificante: str):
+    """
+    Replica la molécula y devuelve las dos moléculas hijas.
+
+    La replicación es semiconservativa, cada hija conserva una hebra parental y recibe una hebra nueva. La cadena líder
+    se obtiene complementando el molde y la rezagada se une a partir de los fragmentos de Okazaki.
+
+    Args:
+        - codificante (str): Hebra codificante de ADN (5'->3').
+
+    Returns:
+        - ((str, str), (str, str)): Las dos moléculas hijas, cada una como (hebra de arriba 5'->3', hebra de abajo 3'->5').
+          Hija 1 = (líder nueva, molde parental).
+          Hija 2 = (codificante parental, rezagada nueva).
+    """
     molde = complementaria(codificante)
     lider = complementaria(molde)
     rezagada = "".join(
@@ -42,8 +91,19 @@ def replicar_adn(codificante):
     return (lider, molde), (codificante, rezagada)
 
 
-def mostrar_replicacion(codificante):
-    """Muestra de forma resumida la replicación del ADN."""
+def mostrar_replicacion(codificante: str):
+    """
+    Muestra de forma resumida la replicación del ADN.
+
+    Solo se dibujan los primeros MAX_LONGITUD nucleótidos, pero los cálculos usan la secuencia completa.
+
+    Args:
+        - codificante (str): Hebra codificante de ADN (5'->3').
+
+    Returns:
+        - ((str, str), (str, str)): Las dos moléculas hijas, igual que
+          replicar_adn.
+    """
     molde = complementaria(codificante)
     hija_1, hija_2 = replicar_adn(codificante)
     fragmentos = sintetizar_rezagada(codificante)

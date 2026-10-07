@@ -7,10 +7,15 @@ from Bio import SeqIO
 BASES_VALIDAS = set("ATGC")
 
 
-def leer_fasta(ruta):
-    """Lee la primera secuencia de un archivo FASTA.
+def leer_fasta(ruta: str):
+    """
+    Lee la primera secuencia de un archivo FASTA.
 
-    Devuelve (id, secuencia) o (None, None) si no hay registros.
+    Args:
+        - ruta (str): Ruta al archivo FASTA.
+
+    Returns:
+        - (str, str): Tupla con el ID de la secuencia y la secuencia en mayúsculas, o (None, None) si no se pudo leer.
     """
     registros = list(SeqIO.parse(ruta, "fasta"))
 
@@ -21,10 +26,15 @@ def leer_fasta(ruta):
     return registro.id, str(registro.seq).upper()
 
 
-def leer_raw(ruta):
-    """Lee una secuencia en texto plano, sin cabecera.
+def leer_raw(ruta: str):
+    """
+    Lee una secuencia en texto plano, sin cabecera.
 
-    Devuelve (nombre_del_archivo, secuencia).
+    Args:
+        - ruta (str): Ruta al archivo RAW.
+
+    Returns:
+        - (str, str): Tupla con el nombre del archivo (sin extensión) y la secuencia en mayúsculas.
     """
     with open(ruta, "r") as archivo:
         secuencia = "".join(archivo.read().split()).upper()
@@ -33,18 +43,31 @@ def leer_raw(ruta):
     return nombre, secuencia
 
 
-def validar_adn(secuencia):
-    """Comprueba que la secuencia no esté vacía y solo tenga A, T, G, C."""
+def validar_adn(secuencia: str):
+    """
+    Comprueba que la secuencia no esté vacía y solo tenga A, T, G, C.
+
+    Args:
+        - secuencia (str): Secuencia de ADN a validar.
+
+    Returns:
+        - bool: True si la secuencia es válida, False en caso contrario.
+    """
     if not secuencia:
         return False
 
     return set(secuencia) <= BASES_VALIDAS
 
 
-def cargar_secuencia(ruta):
-    """Lee un archivo FASTA o RAW según su extensión y valida el ADN.
+def cargar_secuencia(ruta: str):
+    """
+    Lee un archivo FASTA o RAW según su extensión y valida el ADN.
 
-    Devuelve (id, secuencia) si todo es correcto, o (None, None) si no.
+    Args:
+        - ruta (str): Ruta al archivo de secuencia.
+
+    Returns:
+        - (str, str): Tupla con el ID de la secuencia y la secuencia en mayúsculas, o (None, None) si hubo un error.
     """
     if not os.path.exists(ruta):
         print(f"Error: no se encuentra el archivo '{ruta}'.")
