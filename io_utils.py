@@ -2,7 +2,7 @@
 
 import os
 
-from Bio import SeqIO
+from pathlib import Path
 
 BASES_VALIDAS = set("ATGC")
 
@@ -17,13 +17,29 @@ def leer_fasta(ruta: str):
     Returns:
         - (str, str): Tupla con el ID de la secuencia y la secuencia en mayúsculas, o (None, None) si no se pudo leer.
     """
-    registros = list(SeqIO.parse(ruta, "fasta"))
+    ruta = Path(ruta)
 
-    if not registros:
+    if ruta.suffix.lower() != ".fasta":
+        print(f"Error: '{ruta}' no es un archivo FASTA.")
         return None, None
 
-    registro = registros[0]
-    return registro.id, str(registro.seq).upper()
+    with ruta.open("r") as archivo:
+        seq_id = None
+        secuencia = ""
+
+        for line in archivo:
+            line = line.strip()
+
+            if line.startswith(">"):
+                if seq_id is None:
+                    seq_id = line[1:]
+            else:
+                secuencia += line.upper()
+
+    if seq_id is None or not secuencia:
+        return None, None
+
+    return seq_id, secuencia
 
 
 def leer_raw(ruta: str):
@@ -36,10 +52,13 @@ def leer_raw(ruta: str):
     Returns:
         - (str, str): Tupla con el nombre del archivo (sin extensión) y la secuencia en mayúsculas.
     """
-    with open(ruta, "r") as archivo:
+    ruta = Path(ruta)
+
+    with ruta.open("r") as archivo:
         secuencia = "".join(archivo.read().split()).upper()
 
-    nombre = os.path.splitext(os.path.basename(ruta))[0]
+    nombre = ruta.stem
+
     return nombre, secuencia
 
 
